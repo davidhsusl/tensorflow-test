@@ -78,4 +78,5 @@ crashlytics-build.properties
 fabric.properties
 target/
 
-dataset_train
+dataset
+images
