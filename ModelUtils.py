@@ -1,12 +1,12 @@
 import cv2
 import tensorflow as tf
 
-from FileUtils import read_and_decode
+from FileUtils import read_tf_recodes_by_batch
 
 
 def train_model(tf_filename, batch_size, label_size, save_path, is_continue):
     # 從 TFRecords 讀取資料並解碼
-    image_batch, label_batch = read_and_decode(tf_filename, batch_size)
+    image_batch, label_batch = read_tf_recodes_by_batch(tf_filename, batch_size)
 
     # 轉換陣列的形狀
     image_batch_train = tf.reshape(image_batch, [-1, 225 * 225])
@@ -80,12 +80,12 @@ def train_model(tf_filename, batch_size, label_size, save_path, is_continue):
 
             # 每訓練 10 次後，把最新的正確率顯示出來
             if count % 10 == 0:
-                train_accuracy = accuracy.eval(feed_dict={x: image_data, y_: label_data})
-                print('Iter %d, accuracy %4.2f%%' % (count, train_accuracy * 100))
-
                 # 存檔
                 spath = saver.save(sess, save_path, global_step=count)
                 # print("Model saved in file: %s" % spath)
+
+                train_accuracy = accuracy.eval(feed_dict={x: image_data, y_: label_data})
+                print('Iter %d, accuracy %4.2f%%' % (count, train_accuracy * 100))
 
             count += 1
 
@@ -114,7 +114,7 @@ def analyze_image(model_path, image_path):
         img = cv2.imread(image_path, 0)
 
         # 辨識影像，並印出結果
-        result = sess.run(y, feed_dict={x: img.reshape(-1, 225 * 225)})
+        result = sess.run(y, feed_dict={x: img.reshape((-1, 225 * 225))})
 
         print(result)
         return result

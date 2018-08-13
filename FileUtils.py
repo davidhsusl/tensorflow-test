@@ -88,7 +88,7 @@ def bytes_feature(value):
 
 
 # 將檔案寫成 tfRecord 格式
-def convert_to_tf_record(images, labels, filename):
+def convert_to_tf_records(images, labels, filename):
     global image_raw
     n_samples = len(labels)
     tf_writer = tf.python_io.TFRecordWriter(filename)
@@ -121,9 +121,9 @@ def convert_to_tf_record(images, labels, filename):
 
 
 # 讀取 tfRecord 檔案
-def read_tf_record(tf_filename, output_dir):
+def read_tf_records_and_write(tf_filename, output_dir, image_copy_count):
     # 產生文件名隊列
-    filename_quene = tf.train.string_input_producer([tf_filename], shuffle=False, num_epochs=1)
+    filename_quene = tf.train.string_input_producer([tf_filename], shuffle=False, num_epochs=image_copy_count)
 
     # 數據讀取器
     reader = tf.TFRecordReader()
@@ -152,24 +152,24 @@ def read_tf_record(tf_filename, output_dir):
 
         count = 0
         try:
-            while count < 25:
+            while count < 10000:
                 # 讀取
                 image_data, label_data = sess.run([image, label])
 
                 # 寫檔
-                cv2.imwrite(output_dir + 'tf_%d_%d.jpg' % (label_data, count), image_data)
+                cv2.imwrite(output_dir + '/tf_%d_%d.jpg' % (label_data, count), image_data)
                 count += 1
 
             print('Done!')
         except tf.errors.OutOfRangeError:
-            print('Error!')
+            print('No more image!')
         finally:
             coord.request_stop()
 
         coord.join(threads)
 
 
-def read_and_decode(tf_filename, batch_size):
+def read_tf_recodes_by_batch(tf_filename, batch_size):
     # 產生文件名隊列
     filename_quene = tf.train.string_input_producer([tf_filename], num_epochs=None)
 

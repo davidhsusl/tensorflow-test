@@ -1,8 +1,8 @@
-from FileUtils import get_file, convert_to_tf_record, read_tf_record
+from FileUtils import get_file, convert_to_tf_records, read_tf_records_and_write
 from ModelUtils import train_model, analyze_image
 
 
-def main():
+def write_tf_records():
     # 資料集的位置
     train_dataset_dir = './dataset_train'
 
@@ -13,15 +13,17 @@ def main():
     # print(labels)
 
     # 開始寫入 TFRecord 檔案
-    convert_to_tf_record(images, labels, './Train.tfrecords')
+    convert_to_tf_records(images, labels, './Train.tfrecords')
 
 
-def main2():
+def read_tf_records():
     # TFRecord 的位置
     train_record_file = './Train.tfrecords'
+    output_dir = './images'
+    image_copy_count = 100
 
     # 開始讀取 TFRecord 並將影像資料寫出
-    read_tf_record(train_record_file, './images')
+    read_tf_records_and_write(train_record_file, output_dir, image_copy_count)
 
 
 # 訓練模型
@@ -36,13 +38,13 @@ def train():
 
 # 辨識圖像
 def image_test():
-    model_path = './model/test_model'
-    image_path = './dataset_train/5/pig3.jpg'
+    model_path = './model/test_model-8100'
+    image_path = './dataset_train_orig/5/pig3.jpg'
     analyze_image(model_path, image_path)
 
 
 if __name__ == '__main__':
-    # main()
-    # main2()
+    # write_tf_records()
+    # read_tf_records()
     train()
     # image_test()
