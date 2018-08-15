@@ -78,5 +78,8 @@ crashlytics-build.properties
 fabric.properties
 target/
 
+# Python
+__pycache__
+
+# Tensorflow
 dataset
-images

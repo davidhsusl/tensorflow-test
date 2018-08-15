@@ -121,7 +121,7 @@ def convert_to_tf_records(images, labels, filename):
 
 
 # 讀取 tfRecord 檔案
-def read_tf_records_and_write(tf_filename, output_dir, image_copy_count):
+def read_tf_records_and_copy_images(tf_filename, output_dir, image_copy_count, image_pixel):
     # 產生文件名隊列
     filename_quene = tf.train.string_input_producer([tf_filename], shuffle=False, num_epochs=image_copy_count)
 
@@ -135,7 +135,7 @@ def read_tf_records_and_write(tf_filename, output_dir, image_copy_count):
                                                        'image_raw': tf.FixedLenFeature([], tf.string)})
 
     image = tf.decode_raw(image_features['image_raw'], tf.uint8)
-    image = tf.reshape(image, [225, 225])
+    image = tf.reshape(image, [image_pixel, image_pixel])
 
     label = tf.cast(image_features['label'], tf.int64)
 
@@ -169,7 +169,7 @@ def read_tf_records_and_write(tf_filename, output_dir, image_copy_count):
         coord.join(threads)
 
 
-def read_tf_recodes_by_batch(tf_filename, batch_size):
+def read_tf_recodes_by_batch(tf_filename, batch_size, image_pixel):
     # 產生文件名隊列
     filename_quene = tf.train.string_input_producer([tf_filename], num_epochs=None)
 
@@ -183,7 +183,7 @@ def read_tf_recodes_by_batch(tf_filename, batch_size):
                                                        'image_raw': tf.FixedLenFeature([], tf.string)})
 
     image = tf.decode_raw(image_features['image_raw'], tf.uint8)
-    image = tf.reshape(image, [225, 225])
+    image = tf.reshape(image, [image_pixel, image_pixel])
 
     label = tf.cast(image_features['label'], tf.int64)
 
