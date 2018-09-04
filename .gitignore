@@ -83,3 +83,4 @@ __pycache__
 
 # Tensorflow
 dataset
+MNIST_data
